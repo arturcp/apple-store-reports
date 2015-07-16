@@ -3,7 +3,7 @@ require 'fileutils'
 require 'benchmark'
 require_relative 'colors'
 
-DEFAULT_DIRECTORY = './ios_reports'
+DEFAULT_DIRECTORY = './reports'
 CONFIG_FILE = 'report.properties'
 
 REPORTS = ['installs', 'ratings', 'crashes']
@@ -16,7 +16,7 @@ def welcome_message
 end
 
 def required_fields_message
-  if ENV['VENDOR'].nil?
+  unless ENV['VENDOR']
     puts "#{"The vendor id is required".red}"
     puts
     puts 'Usage:'
@@ -82,7 +82,7 @@ def fetch_from_apple_store
 end
 
 def copy_zip_to_folder(directory)
-  system("cp *.txt.gz #{directory} | rm -f *.txt.gz")
+  system("mv *.txt.gz #{directory}")
 end
 
 def unzip_file(directory)
@@ -91,6 +91,7 @@ end
 
 def import_files(directory)
   puts '*********** Starting Import ***********'
+  puts
 
   assert_directory_exists(directory)
   fetch_from_apple_store
@@ -110,8 +111,8 @@ def messages
 end
 
 def start
-  directory = ENV['DIRECTORY'] || DEFAULT_DIRECTORY
-  import_files(directory)
+  messages
+  import_files(ENV['DIRECTORY'] || DEFAULT_DIRECTORY)
 end
 
 time = Benchmark.realtime do

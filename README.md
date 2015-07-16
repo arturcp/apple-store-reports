@@ -28,7 +28,7 @@ Now, on the terminal, execute:
 
 `VENDOR=12345678 ruby importer.rb`
 
-By default, a folder named "ios_reports" will be created and the data downloaded from Apple Store will be stored in it. It is possible to change the default directory by setting the ENV['DIRECTORY'] on the script call. For example:
+By default, a folder named "reports" will be created and the data downloaded from Apple Store will be stored in it. It is possible to change the default directory by setting the ENV['DIRECTORY'] on the script call. For example:
 
 `DIRECTORY=./new_folder VENDOR=12345678 ruby importer.rb`
 
