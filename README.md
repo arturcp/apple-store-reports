@@ -37,3 +37,16 @@ It is possible to specify the year, month and day to import data. To do that, ma
 `VENDOR=12345678 YEAR=2015 MONTH=7 DAY=3 ruby importer.rb`
 
 If no year, month and day values are provided, the importer will use information from yesterday (considering today the date where the script is being run)
+
+
+2. sql_generator.rb
+
+This script will read all the files in the given directory and generate a set of insert commands to be run on a database. Just like in the import.rb file, you can override the default folder with the ENV['DIRECTORY'] parameter.
+
+To execute it, go to the terminal and run:
+
+`ruby sql_generator.rb`
+
+You can use a different folder (it must match the one used on import.rb):
+
+`DIRECTORY=./new_folder ruby sql_generator.rb`
