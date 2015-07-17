@@ -34,16 +34,18 @@ def properties_message
   end
 end
 
-def gz_file_message
-  unless Dir.glob('*.txt.gz').empty?
-    puts "#{"Attention".yellow}: it seems the importer is already running. "
-    puts "If you are sure it is not the case, we will remove all .txt.gz files and move on. Do you want to continue? #{"(y/n)".light_blue}"
+def existing_file_message(directory)
+  path = "#{directory}/*.*"
+  unless Dir.glob(path).empty?
+    puts "#{"Attention".yellow}: it seems the importer is already running. There are files on the reports folder. "
+    puts "If you are sure it is not the case, we will remove all the files from #{directory.light_blue} and move on. Do you want to continue? #{"(y or n)?".light_blue}"
     answer = gets.downcase[0]
 
     if answer == 'y'
-      puts File.delete(*Dir.glob('*.txt.gz'))
+      puts "#{File.delete(*Dir.glob(path))} file(s) removed"
       puts
     else
+      puts 'aborted'
       abort
     end
   end
@@ -90,6 +92,7 @@ def unzip_file(directory)
 end
 
 def import_files(directory)
+  existing_file_message(directory)
   puts '*********** Starting Import ***********'
   puts
 
@@ -99,6 +102,8 @@ def import_files(directory)
   unzip_file(directory)
 
   puts
+  puts "To generate the sql, run #{"ruby sql_generator.rb".green}"
+  puts
   puts '***************************************'
 end
 
@@ -106,7 +111,6 @@ def messages
   welcome_message
   properties_message
   required_fields_message
-  gz_file_message
   directory_message
 end
 
