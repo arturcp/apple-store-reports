@@ -1,3 +1,5 @@
 reports/
 report.properties
 vendor.properties
+sql/
+logs/
