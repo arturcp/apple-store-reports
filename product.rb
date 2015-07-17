@@ -33,7 +33,7 @@ class Product
     end
 
     def columns
-      COLUMNS.map { |column| "`#{column}`" }.join(', ')
+      COLUMNS.map { |column| "'#{column}'" }.join(', ')
     end
 
     def values
