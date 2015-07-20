@@ -6,11 +6,9 @@ require_relative 'product'
 require_relative 'sale'
 
 DEFAULT_DIRECTORY = './reports'
+INSERT_IGNORE = 'INSERT IGNORE INTO %{table_name} (%{columns}) VALUES (%{values});'
 INSERT = 'INSERT INTO %{table_name} (%{columns}) VALUES (%{values});'
 OUTPUT_FILE_NAME = Time.now.strftime('%Y%m%d%H%M%S%L')
-
-PRODUCTS_TABLE = '`dashboard`.`appfigures_products`'
-SALES_TABLE = '`dashboard`.`appfigures_sales`'
 
 def welcome_message
   puts '+-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+-+'
@@ -58,29 +56,71 @@ def write_to_file(inserts)
   open(filename, "#{file_mode}:UTF-8") { |file| file.write(inserts.join("\n")) }
 end
 
-def import_data(file)
-    lines = File.open(file, "rb:UTF-8") { |f| f.readlines }
-    inserts = []
-    imported_file_name = file.split('/').last
-    inserts << "-- #{imported_file_name}"
+def import_products(imported_file_name, columns, lines)
+  inserts = ["-- PRODUCTS REPORT: #{imported_file_name}"]
 
+  lines.each do |line|
+    item = {}
+    values = line.split("\t")
+
+    product = Product.new(columns, values)
+
+    if values.length > 1
+      inserts << INSERT_IGNORE % { table_name: Product.table, columns: product.columns, values: product.values }
+    end
+  end
+
+  inserts << " \n "
+  write_to_file(inserts)
+end
+
+def import_sales(imported_file_name, columns, lines)
+  inserts = ["-- SALES REPORT"]
+
+  lines.each do |line|
+    item = {}
+    values = line.split("\t")
+
+    sale = Sale.new(columns, values)
+
+    if values.length > 1
+      inserts << INSERT % { table_name: Sale.table, columns: sale.columns, values: sale.values }
+    end
+  end
+
+  inserts << " \n "
+  write_to_file(inserts)
+end
+
+def update_field_sum(field)
+  sql = "UPDATE #{Product.table} p " +
+        "INNER JOIN (" +
+        "  SELECT product_id, SUM(#{field}) as #{field}" +
+        "  FROM #{Sale.table}" +
+        "  GROUP BY product_id" +
+        ") s ON s.product_id = p.id" +
+        " SET p.#{field} = s.#{field};"
+end
+
+def calculate_related_fields
+  inserts = ["-- RELATED VALUES"]
+
+  inserts << update_field_sum('downloads')
+  inserts << update_field_sum('revenue')
+  inserts << update_field_sum('updates')
+  inserts << " \n "
+  write_to_file(inserts)
+end
+
+def import_data(file)
+    imported_file_name = file.split('/').last
+    lines = File.open(file, "rb:UTF-8") { |f| f.readlines }
     columns = lines.shift.split("\t")
 
-    lines.each do |line|
-      item = {}
-      values = line.split("\t")
+    import_products(imported_file_name, columns, lines)
+    import_sales(imported_file_name, columns, lines)
+    calculate_related_fields
 
-      #product = Product.new(columns, values)
-      sales = Sale.new(columns, values)
-
-      if values.length > 1
-        #inserts << INSERT % { table_name: PRODUCTS_TABLE, columns: product.columns, values: product.values }
-        inserts << INSERT % { table_name: SALES_TABLE, columns: sales.columns, values: sales.values }
-      end
-    end
-    inserts << " \n "
-
-    write_to_file(inserts)
     dots = '.' * (120 - imported_file_name.length).abs
     puts "* #{imported_file_name.light_blue} #{dots} #{"done".green}"
     File.delete(file)

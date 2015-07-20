@@ -1,6 +1,9 @@
+require_relative 'product'
+
 class Sale
   attr_accessor :product_id, :downloads, :updates, :revenue, :collected_date
 
+  TABLE = '`dashboard`.`appfigures_sales`'
   COLUMNS = %w(product_id downloads updates revenue collected_date)
 
   def initialize(columns, values)
@@ -12,17 +15,30 @@ class Sale
   end
 
   def columns
-    COLUMNS.map { |column| "`#{column}`" }.join(', ')
+    COLUMNS.map { |column| "#{column}" }.join(', ')
   end
 
   def values
-    fields.map { |value| "'#{value}'" }.join(', ')
+    "#{product_query}, #{downloads}, 0, '#{revenue}', '#{formatted_date}'"
+  end
+
+  def product_query
+    "(select id from #{Product.table} where product_id = '#{self.product_id}' limit 1)"
   end
 
   def calculate_revenue(downloads, price)
     downloads = downloads.to_i || 0
     price = price.to_f || 0
     downloads * price
+  end
+
+  def self.table
+    TABLE
+  end
+
+  def formatted_date
+    datetime = DateTime.strptime(self.collected_date, '%m/%d/%Y')
+    datetime.strftime("%Y-%m-%d")
   end
 
   private

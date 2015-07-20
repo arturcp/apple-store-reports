@@ -6,7 +6,9 @@ class Product
     :last_version, :app_type, :downloads, :updates, :revenue,
     :active, :id_trademark, :apikey_flurry, :apikey_flurry2, :observation
 
-    COLUMNS = %w(product_id name icon_path sky package_name store release_date last_update last_version app_type downloads updates revenue active id_trademark apikey_flurry apikey_flurry2 observation)
+
+    TABLE = '`dashboard`.`appfigures_products`'
+    COLUMNS = %w(product_id name icon_path sku package_name store release_date last_update last_version app_type downloads updates revenue active id_trademark apikey_flurry apikey_flurry2 observation)
 
     def initialize(columns, values)
       hash = Hash[columns.zip(values)]
@@ -29,19 +31,29 @@ class Product
       self.observation = ''
 
       self.icon_path = Icon.fetch(title_parameterize, self.product_id)
-      self.active = active? ? 1 : 0
+      self.active = active?
+    end
+
+    def self.table
+      TABLE
     end
 
     def columns
-      COLUMNS.map { |column| "'#{column}'" }.join(', ')
+      COLUMNS.map { |column| "#{column}" }.join(', ')
     end
 
     def values
-      fields.map { |value| "'#{value}'" }.join(', ')
+      fields.map do |value|
+        if ['true', 'false'].include?(value.to_s)
+          value
+        else
+          "'#{value}'"
+        end
+      end.join(', ')
     end
 
     def active?
-      !self.icon_path.nil? && !self.icon_path.empty? ? 1 : 0
+      !self.icon_path.nil? && !self.icon_path.empty?
     end
 
     private
