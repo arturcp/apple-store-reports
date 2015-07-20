@@ -70,13 +70,13 @@ def import_data(file)
       item = {}
       values = line.split("\t")
 
-      product = Product.new(columns, values)
+      #product = Product.new(columns, values)
+      sales = Sale.new(columns, values)
 
       if values.length > 1
-        inserts << INSERT % { table_name: PRODUCTS_TABLE, columns: product.columns, values: product.values }
+        #inserts << INSERT % { table_name: PRODUCTS_TABLE, columns: product.columns, values: product.values }
+        inserts << INSERT % { table_name: SALES_TABLE, columns: sales.columns, values: sales.values }
       end
-
-
     end
     inserts << " \n "
 
