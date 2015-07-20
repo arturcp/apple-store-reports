@@ -10,6 +10,8 @@ class Product
     TABLE = '`dashboard`.`appfigures_products`'
     COLUMNS = %w(product_id name icon_path sku package_name store release_date last_update last_version app_type downloads updates revenue active id_trademark apikey_flurry apikey_flurry2 observation)
 
+    @@icons = {}
+
     def initialize(columns, values)
       hash = Hash[columns.zip(values)]
       self.product_id = hash['Apple Identifier']
@@ -31,6 +33,7 @@ class Product
       self.observation = ''
 
       self.icon_path = Icon.fetch(title_parameterize, self.product_id)
+      self.icon_path = fetch_icon(title_parameterize, self.product_id)
       self.active = active?
     end
 
@@ -54,6 +57,14 @@ class Product
 
     def active?
       !self.icon_path.nil? && !self.icon_path.empty?
+    end
+
+    def fetch_icon(title, product_id)
+      unless @@icons.has_key?(product_id)
+        @@icons[product_id.to_s] = Icon.fetch(title, product_id)
+      end
+
+      @@icons[product_id.to_s]
     end
 
     private
