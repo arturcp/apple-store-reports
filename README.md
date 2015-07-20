@@ -50,3 +50,9 @@ To execute it, go to the terminal and run:
 You can use a different folder (it must match the one used on import.rb):
 
 `DIRECTORY=./new_folder ruby sql_generator.rb`
+
+
+Database first load
+==========================
+
+To load the initial content into your database, you can use the database_load.rb script. You must inform the vendor, just like you do to import a specific date, and must provide the initial date. The script will download all files from the given date up to four days ago. Then you can run the sql generator script normally.

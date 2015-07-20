@@ -10,6 +10,7 @@ CONFIG_FILE = 'report.properties'
 REPORTS = ['installs', 'ratings', 'crashes']
 
 def welcome_message
+  return if ENV['BATCH']
   puts "+-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+-+"
   puts "|A|p|p|l|e| |S|t|o|r|e| |I|m|p|o|r|t|e|r|"
   puts "+-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+-+-+-+"
@@ -36,6 +37,8 @@ def properties_message
 end
 
 def existing_file_message(directory)
+  return if ENV['BATCH']
+
   path = "#{directory}/*.*"
   unless Dir.glob(path).empty?
     puts "#{"Attention".yellow}: it seems the importer is already running. There are files on the reports folder. "
@@ -53,6 +56,8 @@ def existing_file_message(directory)
 end
 
 def directory_message
+  return if ENV['BATCH']
+
   unless ENV['DIRECTORY']
     puts '** IMPORTANT **'.yellow
     puts "No directory was provided. The reports will be stored in #{DEFAULT_DIRECTORY.light_blue}"
@@ -95,7 +100,7 @@ end
 
 def import_files(directory)
   existing_file_message(directory)
-  puts '*********** Starting Import ***********'
+  puts 'Starting Import...'
   puts
 
   assert_directory_exists(directory)
@@ -106,7 +111,6 @@ def import_files(directory)
   puts
   puts "To generate the sql, run #{"ruby sql_generator.rb".green}"
   puts
-  puts '***************************************'
 end
 
 def messages
