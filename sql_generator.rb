@@ -134,7 +134,6 @@ def import_data(file)
 
     import_products(imported_file_name, columns, lines)
     import_sales(imported_file_name, columns, lines)
-    calculate_related_fields
 
     dots = '.' * (120 - imported_file_name.length).abs
     puts "* #{imported_file_name.light_blue} #{dots} #{"done".green}"
@@ -154,9 +153,12 @@ def start
   puts ''
 
   directory = ENV['DIRECTORY'] || DEFAULT_DIRECTORY
-  Dir.glob("#{directory}/*.txt").each do |csv|
+  files = Dir.glob("#{directory}/*.txt")
+  files.each do |csv|
     import_data(csv)
   end
+
+  calculate_related_fields if files.length > 0
 end
 
 time = Benchmark.realtime do
