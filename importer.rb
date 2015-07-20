@@ -1,6 +1,7 @@
 #Created to be used with ruby >= 1.9
 require 'fileutils'
 require 'benchmark'
+require 'date'
 require_relative 'colors'
 
 DEFAULT_DIRECTORY = './reports'
@@ -67,9 +68,10 @@ def assert_directory_exists(directory)
 end
 
 def java_command
-  year = ENV['YEAR'] || Time.now.year.to_s
-  month = ENV['MONTH'] || Time.now.month.to_s
-  day = ENV['DAY'] || (Time.now.day - 1).to_s
+  today = Date.today - 4
+  year = ENV['YEAR'] || today.year.to_s
+  month = ENV['MONTH'] || today.month.to_s
+  day = ENV['DAY'] || today.day.to_s
 
   id = ENV['ID']
 

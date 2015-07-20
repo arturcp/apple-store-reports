@@ -1,5 +1,6 @@
 require 'benchmark'
 require 'fileutils'
+require 'json'
 
 require_relative 'colors'
 require_relative 'product'
@@ -56,7 +57,20 @@ def write_to_file(inserts)
   open(filename, "#{file_mode}:UTF-8") { |file| file.write(inserts.join("\n")) }
 end
 
+def load_generated_icons
+  path = 'generated_icons.json'
+  if File.exists?(path)
+    file = File.open(path, "rb:UTF-8")
+    Product.icons = JSON.parse(file.read)
+  end
+end
+
+def save_generated_icons
+  open('generated_icons.json', "w:UTF-8") { |file| file.write(Product.icons.to_json) }
+end
+
 def import_products(imported_file_name, columns, lines)
+  load_generated_icons
   inserts = ["-- PRODUCTS REPORT: #{imported_file_name}"]
 
   lines.each do |line|
@@ -72,6 +86,7 @@ def import_products(imported_file_name, columns, lines)
 
   inserts << " \n "
   write_to_file(inserts)
+  save_generated_icons
 end
 
 def import_sales(imported_file_name, columns, lines)

@@ -32,7 +32,6 @@ class Product
       self.apikey_flurry2 = ''
       self.observation = ''
 
-      self.icon_path = Icon.fetch(title_parameterize, self.product_id)
       self.icon_path = fetch_icon(title_parameterize, self.product_id)
       self.active = active?
     end
@@ -65,6 +64,14 @@ class Product
       end
 
       @@icons[product_id.to_s]
+    end
+
+    def self.icons
+      @@icons
+    end
+
+    def self.icons=(value)
+      @@icons = value
     end
 
     private

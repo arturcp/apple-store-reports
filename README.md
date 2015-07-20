@@ -36,7 +36,7 @@ It is possible to specify the year, month and day to import data. To do that, ma
 
 `VENDOR=12345678 YEAR=2015 MONTH=7 DAY=3 ruby importer.rb`
 
-If no year, month and day values are provided, the importer will use information from yesterday (considering today the date where the script is being run)
+If no year, month and day values are provided, the importer will use information from 4 days ago (considering `today` the date when the script is being run)
 
 
 2. sql_generator.rb

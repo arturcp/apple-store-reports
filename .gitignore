@@ -3,3 +3,4 @@ report.properties
 vendor.properties
 sql/
 logs/
+generated_icons.json
