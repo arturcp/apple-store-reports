@@ -2,7 +2,7 @@
 require 'fileutils'
 require 'benchmark'
 require 'date'
-require_relative 'colors'
+require_relative 'models/colors'
 
 DEFAULT_DIRECTORY = './reports'
 CONFIG_FILE = 'report.properties'

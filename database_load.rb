@@ -1,8 +1,7 @@
 #Created to be used with ruby >= 1.9
 require 'benchmark'
 require 'date'
-require_relative 'colors'
-
+require_relative 'models/colors'
 
 def usage
   puts 'Usage:'

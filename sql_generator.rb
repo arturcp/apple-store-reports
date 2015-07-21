@@ -2,9 +2,9 @@ require 'benchmark'
 require 'fileutils'
 require 'json'
 
-require_relative 'colors'
-require_relative 'product'
-require_relative 'sale'
+require_relative 'models/colors'
+require_relative 'models/product'
+require_relative 'models/sale'
 
 DEFAULT_DIRECTORY = './reports'
 INSERT_IGNORE = 'INSERT IGNORE INTO %{table_name} (%{columns}) VALUES (%{values});'

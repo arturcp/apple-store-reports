@@ -4,3 +4,5 @@ vendor.properties
 sql/
 logs/
 generated_icons.json
+config.json
+prefix.properties
