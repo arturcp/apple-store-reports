@@ -1,5 +1,7 @@
 Download statistics reports from Apple Store using ruby scripts.
 
+If you need a tool to download data from the Google Play Store, check the project at https://github.com/arturbcc/google-store-reports
+
 
 Requirements
 ================
@@ -52,7 +54,15 @@ You can use a different folder (it must match the one used on import.rb):
 `DIRECTORY=./new_folder ruby sql_generator.rb`
 
 
+Database structure
+==========================
+
+To create the database, we included a mysql script on the project. It is located into the file database_script.sql
+
+
 Database first load
 ==========================
 
 To load the initial content into your database, you can use the database_load.rb script. You must inform the vendor, just like you do to import a specific date, and must provide the initial date. The script will download all files from the given date up to four days ago. Then you can run the sql generator script normally.
+
+
