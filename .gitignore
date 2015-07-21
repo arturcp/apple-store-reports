@@ -1,6 +1,6 @@
 reports/
 report.properties
-vendor.properties
+secrets.properties
 sql/
 logs/
 generated_icons.json
