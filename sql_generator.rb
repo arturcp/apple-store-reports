@@ -114,7 +114,8 @@ def update_field_sum(field)
         "  FROM #{Sale.table}" +
         "  GROUP BY product_id" +
         ") s ON s.product_id = p.id" +
-        " SET p.#{field} = s.#{field};"
+        " SET p.#{field} = s.#{field} " +
+        " WHERE p.store = 'APPLE'; "
 end
 
 def calculate_related_fields

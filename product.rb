@@ -24,10 +24,10 @@ class Product
       self.last_update = nil
       self.last_version = hash['Version']
       self.app_type = types[hash['Product Type Identifier']]
-      self.downloads = nil
-      self.updates = nil
+      self.downloads = 0
+      self.updates = 0
       self.revenue = nil
-      self.id_trademark = ''
+      self.id_trademark = 0
       self.apikey_flurry = ''
       self.apikey_flurry2 = ''
       self.observation = ''
