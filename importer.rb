@@ -109,8 +109,10 @@ def import_files(directory)
   unzip_file(directory)
 
   puts
-  puts "To generate the sql, run #{"ruby sql_generator.rb".green}"
-  puts
+  unless ENV['BATCH']
+    puts "To generate the sql, run #{"ruby sql_generator.rb".green}"
+    puts
+  end
 end
 
 def messages
