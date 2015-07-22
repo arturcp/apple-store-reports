@@ -32,6 +32,12 @@ time = Benchmark.realtime do
     cmd = "VENDOR=#{ENV['VENDOR']} BATCH=true #{directory} YEAR=#{date.year} MONTH=#{date.month} DAY=#{date.day} ruby importer.rb"
     system(cmd)
   end
+
+  generate_sql = "ruby sql_generator.rb"
+  restore_mysql = "ruby mysql_import.rb"
+
+  system(generate_sql)
+  system(restore_mysql)
 end
 
 puts
