@@ -43,13 +43,13 @@ If no year, month and day values are provided, the importer will use information
 
 2. sql_generator.rb
 
-This script will read all the files in the given directory and generate a set of insert commands to be run on a database. Just like in the import.rb file, you can override the default folder with the ENV['DIRECTORY'] parameter.
+This script will read all the files in the given directory and generate a set of insert commands to be run on a database. Just like in the importer.rb file, you can override the default folder with the ENV['DIRECTORY'] parameter.
 
 To execute it, go to the terminal and run:
 
 `ruby sql_generator.rb`
 
-You can use a different folder (it must match the one used on import.rb):
+You can use a different folder (it must match the one used on importer.rb):
 
 `DIRECTORY=./new_folder ruby sql_generator.rb`
 
@@ -71,7 +71,7 @@ To make it easier to run all scripts, you can easily run the whole process with 
 
 It will call the following commands on the given sequence:
 
-* VENDOR=12345678 YEAR=2015 MONTH=7 DAY=3 ruby import.rb
+* VENDOR=12345678 YEAR=2015 MONTH=7 DAY=3 ruby importer.rb
 * ruby sql_generator.rb
 * ruby mysql_import.rb
 
