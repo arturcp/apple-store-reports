@@ -5,7 +5,7 @@ require 'date'
 require_relative 'models/colors'
 
 DEFAULT_DIRECTORY = './reports'
-CONFIG_FILE = 'report.properties'
+CONFIG_FILE = 'config/report.properties'
 
 REPORTS = ['installs', 'ratings', 'crashes']
 
@@ -31,7 +31,7 @@ end
 
 def properties_message
   unless File.exist?(CONFIG_FILE)
-    puts "#{"Error".red}: #{CONFIG_FILE} not found. Rename the file report.properties.sample and change its contents before running the importer"
+    puts "#{"Error".red}: #{CONFIG_FILE} not found. Rename the file config/report.properties.sample to config/config.properties and change its contents before running the importer"
     abort
   end
 end
@@ -83,7 +83,7 @@ def java_command
   date = "#{year}#{month.rjust(2, '0')}#{day.rjust(2, '0')}"
   puts "Running importer for date #{date}"
 
-  "java Autoingestion report.properties #{ENV['VENDOR']} Sales Daily Sumary #{date}"
+  "java Autoingestion config/report.properties #{ENV['VENDOR']} Sales Daily Sumary #{date}"
 end
 
 def fetch_from_apple_store
