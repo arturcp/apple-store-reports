@@ -5,10 +5,12 @@ require 'json'
 require_relative 'models/colors'
 require_relative 'models/product'
 require_relative 'models/sale'
+require_relative 'models/file_writer'
 
 DEFAULT_DIRECTORY = './reports'
 INSERT_IGNORE = 'INSERT IGNORE INTO %{table_name} (%{columns}) VALUES (%{values});'
 INSERT = 'INSERT INTO %{table_name} (%{columns}) VALUES (%{values});'
+
 OUTPUT_FILE_NAME = Time.now.strftime('%Y%m%d%H%M%S%L')
 
 def welcome_message
@@ -32,31 +34,6 @@ def directory_message
   puts ''
 end
 
-def write_to_log(error)
-  directory = './logs'
-  filename = "#{directory}/#{OUTPUT_FILE_NAME}.log"
-
-  unless File.directory?(directory)
-    FileUtils::mkdir_p(directory)
-  end
-
-  file_mode = File.exists?(filename) ? 'a+' : 'w+'
-  File.open(filename, file_mode) { |file| file.write("#{error}\n") }
-end
-
-def write_to_file(inserts)
-  directory = './sql'
-  filename = "#{directory}/#{OUTPUT_FILE_NAME}.sql"
-
-  unless File.directory?(directory)
-    puts "#{"[Warning]".gray}: #{directory} did not exist and was created"
-    FileUtils::mkdir_p(directory)
-  end
-
-  file_mode = File.exists?(filename) ? 'a' : 'w'
-  open(filename, "#{file_mode}:UTF-8") { |file| file.write(inserts.join("\n")) }
-end
-
 def load_generated_icons
   path = 'generated_icons.json'
   if File.exists?(path)
@@ -71,7 +48,7 @@ end
 
 def import_products(imported_file_name, columns, lines)
   load_generated_icons
-  inserts = ["-- PRODUCTS REPORT: #{imported_file_name}"]
+  queries = ["-- PRODUCTS REPORT: #{imported_file_name}"]
 
   lines.each do |line|
     item = {}
@@ -80,17 +57,17 @@ def import_products(imported_file_name, columns, lines)
     product = Product.new(columns, values)
 
     if values.length > 1
-      inserts << INSERT_IGNORE % { table_name: Product.table, columns: product.columns, values: product.values }
+      queries << INSERT_IGNORE % { table_name: Product.table, columns: product.columns, values: product.values }
     end
   end
 
-  inserts << " \n "
-  write_to_file(inserts)
+  queries << " \n "
+  FileWriter.script(OUTPUT_FILE_NAME, queries)
   save_generated_icons
 end
 
 def import_sales(imported_file_name, columns, lines)
-  inserts = ["-- SALES REPORT"]
+  queries = ["-- SALES REPORT"]
 
   lines.each do |line|
     item = {}
@@ -99,12 +76,12 @@ def import_sales(imported_file_name, columns, lines)
     sale = Sale.new(columns, values)
 
     if values.length > 1 && sale.app_download?
-      inserts << INSERT % { table_name: Sale.table, columns: sale.columns, values: sale.values }
+      queries << INSERT % { table_name: Sale.table, columns: sale.columns, values: sale.values }
     end
   end
 
-  inserts << " \n "
-  write_to_file(inserts)
+  queries << " \n "
+  FileWriter.script(OUTPUT_FILE_NAME, queries)
 end
 
 def update_field_sum(field)
@@ -119,13 +96,13 @@ def update_field_sum(field)
 end
 
 def calculate_related_fields
-  inserts = ["-- RELATED VALUES"]
+  queries = ["-- RELATED VALUES"]
 
-  inserts << update_field_sum('downloads')
-  inserts << update_field_sum('revenue')
-  inserts << update_field_sum('updates')
-  inserts << " \n "
-  write_to_file(inserts)
+  queries << update_field_sum('downloads')
+  queries << update_field_sum('revenue')
+  queries << update_field_sum('updates')
+  queries << " \n "
+  FileWriter.script(OUTPUT_FILE_NAME, queries)
 end
 
 def import_data(file)
@@ -141,7 +118,7 @@ def import_data(file)
     File.delete(file)
   rescue => e
     puts "* #{imported_file_name.light_blue} #{dots} #{"error".red}"
-    write_to_log("#{e} \n #{e.backtrace}")
+    FileWriter.log(OUTPUT_FILE_NAME, "#{e} \n #{e.backtrace}")
 end
 
 def start
