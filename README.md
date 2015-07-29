@@ -17,6 +17,21 @@ The script uses the AutoIngestion.class file provided by Apple on his instructio
 Make sure you can run java before using this project.
 
 
+Easy Run
+================
+
+To make a long story short:
+
+- To fetch data from a specific date and import them into the database, run:
+`VENDOR=12345678 YEAR=2015 MONTH=7 DAY=3 ruby start.rb`
+
+- Instead of picking a date, you can load the database with all data provided by Apple by running:
+`VENDOR=12345678 FROM=2015-01-01 ruby database_load.rb`
+
+Now, to understand how things work and what other options you have, just read on.
+
+
+
 The project
 ================
 
