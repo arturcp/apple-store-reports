@@ -1,9 +1,10 @@
 require_relative 'product'
+require_relative 'db_config'
 
 class Sale
-  attr_accessor :product_id, :downloads, :updates, :revenue, :collected_date
+  attr_accessor :product_id, :downloads, :updates, :revenue, :collected_date, :product_type_identifier
 
-  TABLE = '`dashboard`.`appfigures_sales`'
+  TABLE = '`%{database}`.`appfigures_sales`'
   COLUMNS = %w(product_id downloads updates revenue collected_date)
 
   def initialize(columns, values)
@@ -12,6 +13,7 @@ class Sale
     self.downloads = hash['Units']
     self.revenue = calculate_revenue(self.downloads, hash['Customer Price'])
     self.collected_date = hash['End Date']
+    self.product_type_identifier = hash['Product Type Identifier']
   end
 
   def columns
@@ -33,12 +35,18 @@ class Sale
   end
 
   def self.table
-    TABLE
+    @table ||= begin
+      TABLE % { database: DBConfig.database }
+    end
   end
 
   def formatted_date
     datetime = DateTime.strptime(self.collected_date, '%m/%d/%Y')
     datetime.strftime("%Y-%m-%d")
+  end
+
+  def app_download?
+    product_type_identifier && self.product_type_identifier[0] == '1'
   end
 
   private

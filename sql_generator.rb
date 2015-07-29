@@ -98,7 +98,7 @@ def import_sales(imported_file_name, columns, lines)
 
     sale = Sale.new(columns, values)
 
-    if values.length > 1
+    if values.length > 1 && sale.app_download?
       inserts << INSERT % { table_name: Sale.table, columns: sale.columns, values: sale.values }
     end
   end

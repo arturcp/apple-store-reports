@@ -1,4 +1,5 @@
 require_relative 'icon'
+require_relative 'db_config'
 
 class Product
   attr_accessor :product_id, :name, :icon_path, :sku,
@@ -6,8 +7,7 @@ class Product
     :last_version, :app_type, :downloads, :updates, :revenue,
     :active, :id_trademark, :apikey_flurry, :apikey_flurry2, :observation
 
-
-    TABLE = '`dashboard`.`appfigures_products`'
+    TABLE = '`%{database}`.`appfigures_products`'
     COLUMNS = %w(product_id name icon_path sku package_name store release_date last_update last_version app_type downloads updates revenue active id_trademark apikey_flurry apikey_flurry2 observation)
 
     @@icons = {}
@@ -37,7 +37,9 @@ class Product
     end
 
     def self.table
-      TABLE
+      @table ||= begin
+        TABLE % { database: DBConfig.database }
+      end
     end
 
     def columns
